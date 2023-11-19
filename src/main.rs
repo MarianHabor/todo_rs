@@ -6,6 +6,51 @@ use std::cmp::*;
 const REGULAR_PAIR: i16 = 0;
 const HIGHLIGHT_PAIR: i16 = 1;
 
+type Id = usize;
+
+#[derive(Default)]
+struct Ui{
+    list_curr: Option<Id>,
+}
+impl Ui {
+    fn begin(&mut self) {
+        todo!()
+    }
+
+    fn begin_list(&mut self, id: Id) {
+        assert!(self.list_curr.is_none(), "Nested list are not allowed.");
+        self.list_curr = Some(id);
+    }
+
+    fn label(&mut self, text: &str) {
+        todo!()
+    }
+
+    fn list_element(&mut self, label: &str, id: Id) {
+        // let pair = {
+        //     if todo_curr == index {
+        //         HIGHLIGHT_PAIR
+        //     } else {
+        //         REGULAR_PAIR
+        //     }
+        // };
+
+        // attron(COLOR_PAIR(pair));
+        // mv(index as i32, 1);
+        // addstr(*todo);
+        // attroff(COLOR_PAIR(pair));
+
+        todo!()
+    }
+
+    fn end_list(&mut self) {
+        todo!()
+    }
+
+    fn end(&mut self) {
+        todo!()
+    }
+}
 fn main() {
     initscr();
     noecho();
@@ -16,31 +61,41 @@ fn main() {
     init_pair(HIGHLIGHT_PAIR, COLOR_BLACK, COLOR_WHITE);
 
     let mut quit = false;
-    let todos = vec![
-        "Buy bread.",
-        "And millk",
-        "Make more tea",
+    let todos: Vec<String> = vec![
+        "Buy bread.".to_string(),
+        "And millk".to_string(),
+        "Make more tea".to_string()
     ];
 
     let mut todo_curr: usize = 1;
+    let dones = Vec::<String>::new();
+    let mut done_curr: usize = 0;
+
+    let mut ui = Ui::default();
 
     while !quit {
+        ui.begin();
+        {
+            ui.begin_list(todo_curr);
         
-        for (index, todo) in todos.iter().enumerate() {
-            let pair = {
-                if todo_curr == index {
-                    HIGHLIGHT_PAIR
-                } else {
-                    REGULAR_PAIR
-                }
-            };
+            for (index, todo) in todos.iter().enumerate() {
+                ui.list_element(todo, index);
 
-            attron(COLOR_PAIR(pair));
-            mv(index as i32, 1);
-            addstr(*todo);
-            attroff(COLOR_PAIR(pair));
+            }
+            
+            ui.end_list();
+
+            ui.label("------------------");
+
+            ui.begin_list(done_curr);
+            for (index, done) in dones.iter().enumerate() {
+                ui.list_element(done, index);
+            }
+            ui.end_list();
         }
         
+        ui.end();
+
         refresh();
         
         let key = getch();
