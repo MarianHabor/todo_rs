@@ -11,10 +11,13 @@ type Id = usize;
 #[derive(Default)]
 struct Ui{
     list_curr: Option<Id>,
+    row: usize,
+    col: usize,
 }
 impl Ui {
-    fn begin(&mut self) {
-        todo!()
+    fn begin(&mut self, row: usize, col: usize) {
+        self.row = row;
+        self.col = col;
     }
 
     fn begin_list(&mut self, id: Id) {
@@ -22,25 +25,27 @@ impl Ui {
         self.list_curr = Some(id);
     }
 
-    fn label(&mut self, text: &str) {
-        todo!()
+    fn label(&mut self, text: &str, pair: i16) {
+        mv(self.row, self.col);
+        attron(pair);
+        addstr(text);
+        attroff(pair);
+        self.row += 1;
     }
 
     fn list_element(&mut self, label: &str, id: Id) {
-        // let pair = {
-        //     if todo_curr == index {
-        //         HIGHLIGHT_PAIR
-        //     } else {
-        //         REGULAR_PAIR
-        //     }
-        // };
+        let pair = {
+            if todo_curr == index {
+                HIGHLIGHT_PAIR
+            } else {
+                REGULAR_PAIR
+            }
+        };
 
-        // attron(COLOR_PAIR(pair));
-        // mv(index as i32, 1);
-        // addstr(*todo);
-        // attroff(COLOR_PAIR(pair));
-
-        todo!()
+        attron(COLOR_PAIR(pair));
+        mv(index as i32, 1);
+        addstr(*todo);
+        attroff(COLOR_PAIR(pair));
     }
 
     fn end_list(&mut self) {
